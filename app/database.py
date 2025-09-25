@@ -1,17 +1,20 @@
-from sqlalchemy.ext.asyncio import create_async_engine, sessionmaker, AsyncSession
-from sqlalchemy.orm import declarative_base
+# Filename: app/database.py
 
+# CORRECTED IMPORTS FOR MODERN SQLAlchemy (v2.0+)
+from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
+from sqlalchemy.orm import sessionmaker, declarative_base
+
+# Import the settings object which contains your DATABASE_URL
 from app.core.config import settings
 
-# Create an asynchronous engine to connect to the database
-# The engine is the starting point for any SQLAlchemy application.
+# Create an asynchronous engine to connect to the database.
 engine = create_async_engine(
     settings.DATABASE_URL,
-    echo=True,  # Set to False in production
+    echo=True,  # Log SQL queries. Set to False in production.
 )
 
-# Create a sessionmaker factory that will produce new AsyncSession objects
-# A session is the primary interface for all database operations (queries, commits, etc.)
+# Create a configured "AsyncSession" class.
+# We now import sessionmaker from sqlalchemy.orm
 AsyncSessionLocal = sessionmaker(
     autocommit=False,
     autoflush=False,
@@ -20,12 +23,11 @@ AsyncSessionLocal = sessionmaker(
     expire_on_commit=False,
 )
 
-# Create a Base class for our declarative models
-# All of our database table models will inherit from this class.
+# Create a Base class for our ORM models to inherit from.
 Base = declarative_base()
 
-# Dependency to get a DB session
-# This function will be used in our API endpoints to get a database session.
+
+# Dependency function to get a DB session for each API request.
 async def get_db() -> AsyncSession:
     async with AsyncSessionLocal() as session:
         yield session
