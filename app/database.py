@@ -1,20 +1,27 @@
 # Filename: app/database.py
 
-# CORRECTED IMPORTS FOR MODERN SQLAlchemy (v2.0+)
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker, declarative_base
 
-# Import the settings object which contains your DATABASE_URL
 from app.core.config import settings
+
+# --- DEBUGGING LOGIC ---
+# This will print the exact database URL that your application is trying to use.
+# Look for this line in your terminal when the server starts.
+print("--- Attempting to connect with DATABASE_URL from settings ---")
+print(f"URL: '{settings.DATABASE_URL}'")
+print("-------------------------------------------------------------")
+# app/database.py (temporary)
+print("DATABASE_URL (repr):", repr(settings.DATABASE_URL))
+
 
 # Create an asynchronous engine to connect to the database.
 engine = create_async_engine(
     settings.DATABASE_URL,
-    echo=True,  # Log SQL queries. Set to False in production.
+    echo=True,
 )
 
-# Create a configured "AsyncSession" class.
-# We now import sessionmaker from sqlalchemy.orm
+# ... (the rest of the file is the same)
 AsyncSessionLocal = sessionmaker(
     autocommit=False,
     autoflush=False,
@@ -23,11 +30,8 @@ AsyncSessionLocal = sessionmaker(
     expire_on_commit=False,
 )
 
-# Create a Base class for our ORM models to inherit from.
 Base = declarative_base()
 
-
-# Dependency function to get a DB session for each API request.
 async def get_db() -> AsyncSession:
     async with AsyncSessionLocal() as session:
         yield session

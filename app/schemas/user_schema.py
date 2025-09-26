@@ -1,18 +1,19 @@
 # Filename: app/schemas/user_schema.py
 
-import uuid
-from pydantic import BaseModel, EmailStr, ConfigDict
+from pydantic import BaseModel, EmailStr
 
-class UserBase(BaseModel):
+# --- Schemas for Receiving Data (from client to API) ---
+class UserCreate(BaseModel):
     email: EmailStr
-    name: str | None = None
-
-class UserCreate(UserBase):
     password: str
+    name: str
 
-class User(UserBase):
-    id: uuid.UUID
-    is_premium: bool
+# --- Schemas for Sending Data (from API to client) ---
+class User(BaseModel):
+    email: EmailStr
+    name: str
 
-    # This is the modern way for Pydantic v2, which fixes the warning
-    model_config = ConfigDict(from_attributes=True)
+# --- Schema for JWT Token ---
+class Token(BaseModel):
+    access_token: str
+    token_type: str
