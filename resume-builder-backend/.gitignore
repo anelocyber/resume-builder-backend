@@ -1,0 +1,1 @@
+# .gitignore .venv/ __pycache__/ *.pyc .env # Optional: if you generate PDF/other temporary files locally # output/
